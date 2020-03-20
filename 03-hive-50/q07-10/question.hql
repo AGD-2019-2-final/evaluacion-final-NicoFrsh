@@ -3,7 +3,7 @@
 -- ===========================================================================
 --
 -- Escriba una consulta que retorne para cada valor único de la columna `t0.c2`, 
--- los valores correspondientes de la columna `t0.c1`. 
+-- los valores correspondientes de la columna `t0.c1`.
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
@@ -39,5 +39,13 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS tbl0_1;
+CREATE TABLE tbl0_1 AS
+SELECT c2, concat_ws(':',collect_set(cast(c1 as string))) as arraystr
+FROM tbl0
+GROUP BY c2;
 
-
+-- guardar resultados
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tbl0_1;

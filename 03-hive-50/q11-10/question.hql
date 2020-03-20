@@ -22,5 +22,12 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS tbl;
+CREATE TABLE tbl AS
+SELECT concat_ws(",",cast(c1 as string), cast(size(c2) as string), cast(size(c3) as string))
+FROM t0;
 
-
+-- guardar resultados
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tbl;

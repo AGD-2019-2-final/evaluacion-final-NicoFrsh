@@ -29,6 +29,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+sh rm -rf output;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -41,3 +42,28 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+y = FOREACH u GENERATE ToDate(birthday, 'yyyy-MM-dd');
+--DUMP y;
+y = FOREACH y GENERATE ToString($0, 'yyyy-MM-dd'), ToString($0, 'dd'), ToString($0, 'd'),
+	CASE ToString($0, 'EEE')
+		WHEN 'Mon' THEN 'lun'
+                WHEN 'Tue' THEN 'mar'
+                WHEN 'Wed' THEN 'mie'
+                WHEN 'Thu' THEN 'jue'
+                WHEN 'Fri' THEN 'vie'
+                WHEN 'Sat' THEN 'sab'
+                WHEN 'Sun' THEN 'dom'
+	END,
+	CASE ToString($0, 'EEE')
+		WHEN 'Mon' THEN 'lunes'
+                WHEN 'Tue' THEN 'martes'
+                WHEN 'Wed' THEN 'miercoles'
+                WHEN 'Thu' THEN 'jueves'
+                WHEN 'Fri' THEN 'viernes'
+                WHEN 'Sat' THEN 'sabado'
+                WHEN 'Sun' THEN 'domingo'
+	END;
+--y = FOREACH y GENERATE $0, $1, $2, $3, $4;
+--DUMP y;
+
+STORE y INTO 'output' USING PigStorage(',');

@@ -24,6 +24,34 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+sh rm -rf output;
+
 -- 
 --  >>> Escriba su respuesta a partir de este punto <<<
 -- 
+--fs -rm -f -r truck_event_text_partition.csv;
+--fs -put truck_event_text_partition.csv;
+
+u = LOAD 'truck_event_text_partition.csv' USING PigStorage(',') 
+    AS (driverId:INT, 
+        truckId:INT, 
+        eventTime:CHARARRAY,
+        eventType:CHARARRAY,
+        longitude:DOUBLE,
+        latitude:DOUBLE,
+        eventKey:CHARARRAY,
+        correlationId:CHARARRAY,
+        driverName:CHARARRAY,
+        routeId:LONG,
+        routeName:CHARARRAY,
+        eventDate:CHARARRAY);
+        
+y = limit(FOREACH u GENERATE $0, $1, $2)10;
+y = ORDER y BY $0, $1, $2;
+--DUMP y;
+
+-- guardar los resultados
+--fs -rmdir output
+STORE y INTO 'output' USING PigStorage(',');
+
+--fs -get output/ .

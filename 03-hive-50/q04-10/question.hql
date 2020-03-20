@@ -2,7 +2,7 @@
 -- Pregunta
 -- ===========================================================================
 --
--- Escriba una consulta que retorne los valores únicos de la columna `t0.c5` 
+-- Escriba una que retorne los valores únicos de la columna `t0.c5` 
 -- (ordenados). 
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
@@ -40,3 +40,11 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+DROP TABLE IF EXISTS tbl0_letras;
+CREATE TABLE tbl0_letras AS (SELECT DISTINCT tabla.letras FROM (SELECT EXPLODE(c5) AS letras FROM tbl0) AS tabla)
+ORDER BY letras;
+
+-- guardar resultados
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tbl0_letras;

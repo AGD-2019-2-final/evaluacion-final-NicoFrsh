@@ -14,6 +14,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+sh rm -rf output;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -26,3 +27,7 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+y = FOREACH u GENERATE REGEX_EXTRACT(birthday,'(....)-(..)-(..)',2);
+--DUMP y;
+
+STORE y INTO 'output';

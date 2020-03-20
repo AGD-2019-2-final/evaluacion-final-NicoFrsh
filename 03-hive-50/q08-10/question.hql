@@ -4,7 +4,7 @@
 --
 -- Escriba una consulta que para cada valor único de la columna `t0.c2,` 
 -- calcule la suma de todos los valores asociados a las claves en la columna 
--- `t0.c6`.
+-- `t0.c6`. -->
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
@@ -40,5 +40,14 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS tbl0_1;
+CREATE TABLE tbl0_1 AS
+SELECT c2, sum(val)
+FROM tbl0
+LATERAL VIEW EXPLODE(c6) b as key,val
+GROUP BY c2;
 
-
+-- guardar resultados
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tbl0_1;

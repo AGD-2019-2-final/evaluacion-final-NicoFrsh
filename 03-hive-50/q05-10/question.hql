@@ -3,7 +3,7 @@
 -- ===========================================================================
 --
 -- Realice una consulta que compute la cantidad de veces que aparece cada valor 
--- de la columna `t0.c5`  por año.
+-- de la columna `t0.c5`  por año. --> GROUP BY fecha.year
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
@@ -39,4 +39,15 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS tbl0_1;
+CREATE TABLE tbl0_1 AS
+SELECT year(c4) as years, key, count(1)
+FROM tbl0
+LATERAL VIEW EXPLODE(c5) b as key
+GROUP BY year(c4), key
+ORDER BY years, key;
 
+-- guardar resultados
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tbl0_1;
